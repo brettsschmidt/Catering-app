@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wedding Bartending Planner</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <h1>Wedding Bartending Planner</h1>
+      <p class="tagline">Plan the perfect open bar for your special day</p>
+    </div>
+  </header>
+
+  <main>
+    <!-- Nav Tabs -->
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="event">Event Details</button>
+      <button class="tab-btn" data-tab="menu">Drink Menu</button>
+      <button class="tab-btn" data-tab="quantities">Quantities</button>
+      <button class="tab-btn" data-tab="staff">Staff & Timeline</button>
+      <button class="tab-btn" data-tab="budget">Budget</button>
+      <button class="tab-btn" data-tab="checklist">Checklist</button>
+    </nav>
+
+    <!-- Tab: Event Details -->
+    <section class="tab-panel active" id="tab-event">
+      <div class="card">
+        <h2>Event Details</h2>
+        <div class="form-grid">
+          <div class="field">
+            <label for="eventName">Event Name</label>
+            <input type="text" id="eventName" placeholder="e.g. Smith & Jones Wedding" />
+          </div>
+          <div class="field">
+            <label for="eventDate">Wedding Date</label>
+            <input type="date" id="eventDate" />
+          </div>
+          <div class="field">
+            <label for="venue">Venue</label>
+            <input type="text" id="venue" placeholder="e.g. The Grand Ballroom" />
+          </div>
+          <div class="field">
+            <label for="guestCount">Guest Count</label>
+            <input type="number" id="guestCount" min="1" max="2000" placeholder="150" />
+          </div>
+          <div class="field">
+            <label for="eventDuration">Event Duration (hours)</label>
+            <input type="number" id="eventDuration" min="1" max="12" step="0.5" placeholder="5" />
+          </div>
+          <div class="field">
+            <label for="serviceStyle">Service Style</label>
+            <select id="serviceStyle">
+              <option value="full">Full Open Bar</option>
+              <option value="beer-wine">Beer & Wine Only</option>
+              <option value="signature">Signature Cocktails Only</option>
+              <option value="limited">Limited Bar (2–3 spirits)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="cocktailHour">Cocktail Hour Duration (hours)</label>
+            <input type="number" id="cocktailHour" min="0" max="3" step="0.5" placeholder="1" />
+          </div>
+          <div class="field">
+            <label for="drinkingIntensity">Guest Drinking Preference</label>
+            <select id="drinkingIntensity">
+              <option value="light">Light (1–1.5 drinks/hr)</option>
+              <option value="moderate" selected>Moderate (1.5–2 drinks/hr)</option>
+              <option value="heavy">Heavy (2–2.5 drinks/hr)</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="saveEventDetails()">Save &amp; Continue</button>
+      </div>
+
+      <div class="card summary-card" id="eventSummary" style="display:none">
+        <h3>Event Summary</h3>
+        <div id="eventSummaryContent"></div>
+      </div>
+    </section>
+
+    <!-- Tab: Drink Menu -->
+    <section class="tab-panel" id="tab-menu">
+      <div class="card">
+        <h2>Drink Menu Builder</h2>
+        <p class="hint">Select the drinks you want to offer. Quantities will be calculated automatically.</p>
+
+        <div class="menu-category">
+          <h3>Spirits</h3>
+          <div class="menu-grid">
+            <label class="menu-item"><input type="checkbox" name="spirit" value="vodka" checked /> Vodka</label>
+            <label class="menu-item"><input type="checkbox" name="spirit" value="whiskey" checked /> Whiskey / Bourbon</label>
+            <label class="menu-item"><input type="checkbox" name="spirit" value="gin" /> Gin</label>
+            <label class="menu-item"><input type="checkbox" name="spirit" value="rum" /> Rum</label>
+            <label class="menu-item"><input type="checkbox" name="spirit" value="tequila" checked /> Tequila</label>
+            <label class="menu-item"><input type="checkbox" name="spirit" value="scotch" /> Scotch</label>
+          </div>
+        </div>
+
+        <div class="menu-category">
+          <h3>Wine</h3>
+          <div class="menu-grid">
+            <label class="menu-item"><input type="checkbox" name="wine" value="red" checked /> Red Wine</label>
+            <label class="menu-item"><input type="checkbox" name="wine" value="white" checked /> White Wine</label>
+            <label class="menu-item"><input type="checkbox" name="wine" value="rose" /> Rosé</label>
+            <label class="menu-item"><input type="checkbox" name="wine" value="prosecco" checked /> Prosecco / Champagne</label>
+          </div>
+        </div>
+
+        <div class="menu-category">
+          <h3>Beer</h3>
+          <div class="menu-grid">
+            <label class="menu-item"><input type="checkbox" name="beer" value="domestic" checked /> Domestic Beer</label>
+            <label class="menu-item"><input type="checkbox" name="beer" value="craft" /> Craft Beer</label>
+            <label class="menu-item"><input type="checkbox" name="beer" value="light" checked /> Light Beer</label>
+            <label class="menu-item"><input type="checkbox" name="beer" value="nonalc-beer" /> Non-Alcoholic Beer</label>
+          </div>
+        </div>
+
+        <div class="menu-category">
+          <h3>Signature Cocktails</h3>
+          <div id="signatureCocktails">
+            <div class="cocktail-row">
+              <input type="text" placeholder="Cocktail name (e.g. Rosé Spritz)" class="cocktail-name" />
+              <input type="text" placeholder="Ingredients (e.g. Rosé, St-Germain, soda)" class="cocktail-ingredients" />
+              <button class="btn-remove" onclick="removeCocktail(this)">Remove</button>
+            </div>
+          </div>
+          <button class="btn-secondary" onclick="addCocktail()">+ Add Signature Cocktail</button>
+        </div>
+
+        <div class="menu-category">
+          <h3>Non-Alcoholic / Mixers</h3>
+          <div class="menu-grid">
+            <label class="menu-item"><input type="checkbox" name="mixer" value="soda" checked /> Sodas (Coke, Sprite, etc.)</label>
+            <label class="menu-item"><input type="checkbox" name="mixer" value="juice" checked /> Juices (OJ, Cranberry, etc.)</label>
+            <label class="menu-item"><input type="checkbox" name="mixer" value="tonic" checked /> Tonic &amp; Club Soda</label>
+            <label class="menu-item"><input type="checkbox" name="mixer" value="water" checked /> Sparkling &amp; Still Water</label>
+            <label class="menu-item"><input type="checkbox" name="mixer" value="mocktails" /> Mocktail Station</label>
+            <label class="menu-item"><input type="checkbox" name="mixer" value="coffee" /> Coffee &amp; Tea Station</label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab: Quantities -->
+    <section class="tab-panel" id="tab-quantities">
+      <div class="card">
+        <h2>Quantity Calculator</h2>
+        <p class="hint">Based on your event details and menu selections.</p>
+        <button class="btn-primary" onclick="calculateQuantities()">Calculate Quantities</button>
+      </div>
+
+      <div id="quantityResults"></div>
+    </section>
+
+    <!-- Tab: Staff & Timeline -->
+    <section class="tab-panel" id="tab-staff">
+      <div class="card">
+        <h2>Staff Planning</h2>
+        <div id="staffRecommendation">
+          <p class="hint">Fill in Event Details first to get staffing recommendations.</p>
+        </div>
+
+        <h3 style="margin-top:2rem">Staff Roster</h3>
+        <div id="staffRoster">
+          <div class="staff-row">
+            <input type="text" placeholder="Name" class="staff-name" />
+            <select class="staff-role">
+              <option>Lead Bartender</option>
+              <option>Bartender</option>
+              <option>Barback</option>
+              <option>Server</option>
+            </select>
+            <input type="text" placeholder="Phone / Notes" class="staff-notes" />
+            <button class="btn-remove" onclick="removeStaff(this)">Remove</button>
+          </div>
+        </div>
+        <button class="btn-secondary" onclick="addStaff()">+ Add Staff Member</button>
+      </div>
+
+      <div class="card">
+        <h2>Event Timeline</h2>
+        <div id="timeline">
+          <div class="timeline-row">
+            <input type="time" class="timeline-time" value="14:00" />
+            <input type="text" class="timeline-event" placeholder="Setup begins" />
+            <button class="btn-remove" onclick="removeTimelineRow(this)">Remove</button>
+          </div>
+          <div class="timeline-row">
+            <input type="time" class="timeline-time" value="16:00" />
+            <input type="text" class="timeline-event" placeholder="Cocktail hour starts" />
+            <button class="btn-remove" onclick="removeTimelineRow(this)">Remove</button>
+          </div>
+          <div class="timeline-row">
+            <input type="time" class="timeline-time" value="17:00" />
+            <input type="text" class="timeline-event" placeholder="Reception / dinner bar opens" />
+            <button class="btn-remove" onclick="removeTimelineRow(this)">Remove</button>
+          </div>
+          <div class="timeline-row">
+            <input type="time" class="timeline-time" value="22:00" />
+            <input type="text" class="timeline-event" placeholder="Bar closes" />
+            <button class="btn-remove" onclick="removeTimelineRow(this)">Remove</button>
+          </div>
+          <div class="timeline-row">
+            <input type="time" class="timeline-time" value="22:30" />
+            <input type="text" class="timeline-event" placeholder="Teardown complete" />
+            <button class="btn-remove" onclick="removeTimelineRow(this)">Remove</button>
+          </div>
+        </div>
+        <button class="btn-secondary" onclick="addTimelineRow()">+ Add Timeline Entry</button>
+      </div>
+    </section>
+
+    <!-- Tab: Budget -->
+    <section class="tab-panel" id="tab-budget">
+      <div class="card">
+        <h2>Budget Tracker</h2>
+        <div class="field" style="max-width:300px">
+          <label for="totalBudget">Total Bar Budget ($)</label>
+          <input type="number" id="totalBudget" min="0" placeholder="3000" />
+        </div>
+        <button class="btn-primary" onclick="calculateBudget()">Estimate Costs</button>
+      </div>
+
+      <div id="budgetResults"></div>
+
+      <div class="card">
+        <h2>Custom Line Items</h2>
+        <div id="budgetLineItems">
+          <div class="budget-row">
+            <input type="text" placeholder="Item (e.g. Ice)" class="budget-item-name" />
+            <input type="number" placeholder="Cost ($)" class="budget-item-cost" min="0" />
+            <button class="btn-remove" onclick="removeBudgetRow(this)">Remove</button>
+          </div>
+        </div>
+        <button class="btn-secondary" onclick="addBudgetRow()">+ Add Line Item</button>
+        <div class="budget-total" id="customBudgetTotal"></div>
+      </div>
+    </section>
+
+    <!-- Tab: Checklist -->
+    <section class="tab-panel" id="tab-checklist">
+      <div class="card">
+        <h2>Planning Checklist</h2>
+        <p class="hint">Track everything you need to prepare for the event.</p>
+        <div id="checklistContainer"></div>
+        <button class="btn-secondary" onclick="addChecklistItem()">+ Add Custom Task</button>
+        <div style="margin-top:1.5rem">
+          <button class="btn-primary" onclick="exportPlan()">Export Full Plan (JSON)</button>
+          <button class="btn-secondary" onclick="printPlan()" style="margin-left:0.5rem">Print Plan</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Wedding Bartending Planner &mdash; Plan responsibly. Always serve alcohol legally and safely.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
